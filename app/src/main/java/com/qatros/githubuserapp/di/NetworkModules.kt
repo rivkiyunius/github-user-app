@@ -2,6 +2,12 @@ package com.qatros.githubuserapp.di
 
 import com.qatros.githubuserapp.BuildConfig
 import com.qatros.githubuserapp.model.ApiService
+import com.qatros.githubuserapp.repository.DataRepository
+import com.qatros.githubuserapp.repository.DataRepositoryImpl
+import com.qatros.githubuserapp.repository.localdatasources.LocalDataSource
+import com.qatros.githubuserapp.repository.localdatasources.LocalDataSourcesImpl
+import com.qatros.githubuserapp.repository.remotedatasources.RemoteDataSources
+import com.qatros.githubuserapp.repository.remotedatasources.RemoteDataSourcesImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +32,7 @@ import javax.inject.Singleton
 object NetworkModules {
     @Provides
     @Singleton
-    fun provideOkHttpLogger(@ApplicationContext context: ApplicationContext): OkHttpClient {
+    fun provideOkHttpLogger(): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             level =
                 if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
@@ -35,7 +41,7 @@ object NetworkModules {
             addInterceptor { chain ->
                 val builder = chain.request()
                     .newBuilder()
-                    .addHeader("Authorization", "token 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")
+                    .addHeader("Authorization", "token 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")
                 chain.proceed(builder.build())
             }
             addInterceptor(logging)
@@ -48,7 +54,7 @@ object NetworkModules {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient) = Retrofit.Builder()
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(BuildConfig.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
